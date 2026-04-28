@@ -7,14 +7,41 @@ import CartDrawer from './components/CartDrawer';
 import ChatWidget from './components/ChatWidget';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
-import { MenuItem, CartItem, Language, Theme } from './types';
+import AdminDashboard from './components/AdminDashboard';
+import { MenuItem, CartItem, Language, Theme, Order, OrderStatus } from './types';
 
 export default function App() {
+  const [isAdmin, setIsAdmin] = useState(false);
   const [lang, setLang] = useState<Language>('ar');
   const [theme, setTheme] = useState<Theme>('light');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Mock orders for demonstration
+  const [orders, setOrders] = useState<Order[]>([
+    {
+      id: 'ord-1234',
+      items: [{
+        id: '1',
+        name: 'كبسة دجاج ترف',
+        nameEn: 'Taraf Chicken Kabsa',
+        description: 'دجاج محمر مع أرز بسمتي فاخر ومجموعة من البهارات النجدية الأصيلة.',
+        descriptionEn: 'Roasted chicken with premium basmati rice and a blend of authentic Najdi spices.',
+        price: 45,
+        category: 'أطباق رئيسية',
+        categoryEn: 'Main Dishes',
+        image: 'https://images.unsplash.com/photo-1512058560550-42749359a777?auto=format&fit=crop&q=80&w=800',
+        quantity: 2
+      }],
+      total: 90,
+      status: 'pending',
+      deliveryType: 'takeaway',
+      customerName: 'فهد محمد',
+      customerPhone: '0500000000',
+      createdAt: Date.now() - 3600000
+    }
+  ]);
 
   // Sync theme with DOM
   useEffect(() => {
@@ -52,10 +79,56 @@ export default function App() {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
+  const updateOrderStatus = (orderId: string, status: OrderStatus) => {
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+  };
+
+  const deleteOrder = (orderId: string) => {
+    setOrders(prev => prev.filter(o => o.id !== orderId));
+  };
+
+  const updateOrderItemQuantity = (orderId: string, itemId: string, delta: number) => {
+    setOrders(prev => prev.map(o => {
+      if (o.id !== orderId) return o;
+      const newItems = o.items.map(item => {
+        if (item.id !== itemId) return item;
+        return { ...item, quantity: Math.max(1, item.quantity + delta) };
+      });
+      const newTotal = newItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+      return { ...o, items: newItems, total: newTotal };
+    }));
+  };
+
   const scrollToMenu = () => {
     const el = document.getElementById('menu');
     el?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  if (isAdmin) {
+    return (
+      <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-bg'}`}>
+        <Navbar 
+          lang={lang}
+          setLang={setLang}
+          theme={theme}
+          toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          cartCount={0}
+          onOpenCart={() => {}}
+          onOpenChat={() => setIsAdmin(false)}
+        />
+        <AdminDashboard 
+          orders={orders}
+          onUpdateStatus={updateOrderStatus}
+          onDeleteOrder={deleteOrder}
+          onUpdateItemQuantity={updateOrderItemQuantity}
+          lang={lang}
+        />
+        <div className="fixed bottom-6 right-6">
+          <button onClick={() => setIsAdmin(false)} className="btn-primary">العودة للمتجر</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-bg'}`}>
@@ -84,6 +157,9 @@ export default function App() {
       </main>
 
       <Footer lang={lang} />
+      <div className="py-8 text-center opacity-20">
+        <button onClick={() => setIsAdmin(true)} className="text-xs">لوحة التحكم</button>
+      </div>
 
       <CartDrawer 
         lang={lang}

@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { MENU_ITEMS } from "../constants";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY1 || process.env.GEMINI_API_KEY });
 
 const SYSTEM_PROMPT = `
 أنت "عمر"، المساعد الذكي وخبير الطلبات لمطعم ومقهى "مزاج".
@@ -35,7 +35,9 @@ export async function getChatResponse(message: string, history: { role: 'user' |
       ],
       config: {
         systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.8,
+        temperature: 0.7,
+        maxOutputTokens: 150, // Short response for speed
+        topP: 0.8,
       },
     });
     

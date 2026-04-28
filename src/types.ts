@@ -16,6 +16,21 @@ export interface CartItem extends MenuItem {
   quantity: number;
 }
 
+export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
+export type DeliveryType = 'takeaway' | 'dine-in';
+
+export interface Order {
+  id: string;
+  items: CartItem[];
+  total: number;
+  status: OrderStatus;
+  deliveryType: DeliveryType;
+  customerName: string;
+  customerPhone: string;
+  pickupTime?: string;
+  createdAt: number;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';

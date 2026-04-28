@@ -29,7 +29,21 @@ export const translations = {
     chatWelcome: "يا هلا والله بمزاج! أنا عمر، أبشر بالسعد، عندك استفسار عن المنيو أو تبي اقتراح يضبط يومك؟",
     chatPlaceholder: "اسأل عمر...",
     currency: "ر.س",
-    online: "متصل الآن"
+    online: "متصل الآن",
+    adminDashboard: "لوحة التحكم",
+    orders: "الطلبات",
+    statusPending: "قيد الانتظار",
+    statusPreparing: "يتم التحضير",
+    statusReady: "جاهز",
+    statusDelivered: "تم الاستلام",
+    statusCancelled: "ملغي",
+    takeaway: "سفري / تيك أوي",
+    dineIn: "محلي / في المطعم",
+    updateStatus: "تحديث الحالة",
+    noOrders: "لا توجد طلبات حالياً",
+    customer: "العميل",
+    details: "التفاصيل",
+    totalAmount: "الإجمالي الكلي"
   },
   en: {
     restaurantName: "Mazaj",
@@ -59,6 +73,20 @@ export const translations = {
     chatWelcome: "Welcome to Mazaj! I'm Omar. How can I help you today? Need a recommendation or a look at the menu?",
     chatPlaceholder: "Ask Omar...",
     currency: "SAR",
-    online: "Online Now"
+    online: "Online Now",
+    adminDashboard: "Admin Dashboard",
+    orders: "Orders",
+    statusPending: "Pending",
+    statusPreparing: "Preparing",
+    statusReady: "Ready",
+    statusDelivered: "Delivered",
+    statusCancelled: "Cancelled",
+    takeaway: "Takeaway",
+    dineIn: "Dine-in",
+    updateStatus: "Update Status",
+    noOrders: "No orders yet",
+    customer: "Customer",
+    details: "Details",
+    totalAmount: "Total Amount"
   }
 };

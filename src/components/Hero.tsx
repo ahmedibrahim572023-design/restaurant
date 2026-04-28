@@ -36,7 +36,7 @@ export default function Hero({ onOrderNow, lang }: HeroProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-6xl md:text-8xl font-serif text-ink dark:text-dark-ink mb-6 leading-[1.1]"
+          className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-ink dark:text-dark-ink mb-6 leading-[1.1]"
         >
           {t.slogan.split(' ').map((word, i) => (
             <span key={i} className={word === 'مزاجك' || word === 'Mood' ? 'italic text-accent' : ''}>

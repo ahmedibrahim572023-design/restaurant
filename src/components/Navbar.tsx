@@ -25,16 +25,16 @@ export default function Navbar({
   const t = translations[lang];
 
   return (
-    <nav className="sticky top-0 z-50 glass-card px-6 py-4 flex justify-between items-center">
-      <div className="flex items-center gap-2">
+    <nav className="sticky top-0 z-50 glass-card px-4 md:px-8 py-4 flex justify-between items-center">
+      <div className="flex items-center gap-1.5 md:gap-3">
         <motion.div 
           initial={{ rotate: -10 }}
           animate={{ rotate: 0 }}
-          className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center text-white font-serif font-bold text-xl shadow-lg"
+          className="w-8 h-8 md:w-10 md:h-10 bg-accent rounded-xl flex items-center justify-center text-white font-serif font-bold text-lg md:text-xl shadow-lg shrink-0"
         >
           {lang === 'ar' ? 'م' : 'M'}
         </motion.div>
-        <span className="font-serif text-2xl font-bold tracking-tight text-ink dark:text-dark-ink">{t.restaurantName}</span>
+        <span className="font-serif text-xl md:text-2xl font-bold tracking-tight text-ink dark:text-dark-ink truncate">{t.restaurantName}</span>
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
