@@ -43,7 +43,14 @@ export const translations = {
     noOrders: "لا توجد طلبات حالياً",
     customer: "العميل",
     details: "التفاصيل",
-    totalAmount: "الإجمالي الكلي"
+    totalAmount: "الإجمالي الكلي",
+    specialOffers: "عروضنا الخاصة",
+    outOfStockNotify: "إبلاغ بنفاد الصنف",
+    addOffer: "إضافة عرض جديد",
+    offerTitle: "عنوان العرض",
+    offerDesc: "وصف العرض",
+    active: "نشط",
+    inactive: "غير نشط"
   },
   en: {
     restaurantName: "Mazaj",
@@ -87,6 +94,13 @@ export const translations = {
     noOrders: "No orders yet",
     customer: "Customer",
     details: "Details",
-    totalAmount: "Total Amount"
+    totalAmount: "Total Amount",
+    specialOffers: "Special Offers",
+    outOfStockNotify: "Items Out of Stock",
+    addOffer: "Add New Offer",
+    offerTitle: "Offer Title",
+    offerDesc: "Offer Description",
+    active: "Active",
+    inactive: "Inactive"
   }
 };

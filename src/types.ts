@@ -19,6 +19,17 @@ export interface CartItem extends MenuItem {
 export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
 export type DeliveryType = 'takeaway' | 'dine-in';
 
+export interface Offer {
+  id: string;
+  title: string;
+  titleEn: string;
+  description: string;
+  descriptionEn: string;
+  code?: string;
+  image: string;
+  isActive: boolean;
+}
+
 export interface Order {
   id: string;
   items: CartItem[];

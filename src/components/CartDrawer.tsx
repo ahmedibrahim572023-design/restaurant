@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Minus, Plus, Trash2, Send, ShoppingCart } from 'lucide-react';
-import { CartItem, Language, DeliveryType } from '../types';
+import { CartItem, Language, DeliveryType, Order } from '../types';
 import { WHATSAPP_NUMBER } from '../constants';
 import { translations } from '../translations';
 
@@ -11,6 +11,7 @@ interface CartDrawerProps {
   items: CartItem[];
   onUpdateQuantity: (id: string, delta: number) => void;
   onRemoveItem: (id: string) => void;
+  onPlaceOrder: (order: Omit<Order, 'id' | 'createdAt' | 'status'>) => void;
   lang: Language;
 }
 
@@ -20,27 +21,42 @@ export default function CartDrawer({
   items, 
   onUpdateQuantity, 
   onRemoveItem,
-  lang
+  onPlaceOrder,
+  lang 
 }: CartDrawerProps) {
   const t = translations[lang];
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('takeaway');
   const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [pickupTime, setPickupTime] = useState('');
   
   const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  const handleSendOrder = () => {
-    let message = lang === 'ar' ? `*طلب جديد من مزاج 🍽️*\n\n` : `*New Order from Mazaj 🍽️*\n\n`;
-    message += `*النوع:* ${deliveryType === 'takeaway' ? t.takeaway : t.dineIn}\n`;
-    if (pickupTime) message += `*وقت الاستلام:* ${pickupTime}\n`;
-    message += `\n*الأصناف:*\n`;
-    items.forEach(item => {
-      message += `• ${lang === 'ar' ? item.name : item.nameEn} (x${item.quantity}) - ${item.price * item.quantity} ${t.currency}\n`;
+  const handlePlaceOrderClick = () => {
+    if (items.length === 0) return;
+    if (!customerName || !customerPhone) {
+      alert(lang === 'ar' ? 'فضلاً أدخل الاسم ورقم الجوال' : 'Please enter name and phone number');
+      return;
+    }
+
+    // Add to local dashboard state
+    onPlaceOrder({
+      items: [...items],
+      total,
+      deliveryType,
+      customerName,
+      customerPhone,
+      pickupTime
     });
-    message += `\n*${t.total}: ${total} ${t.currency}*\n\n${lang === 'ar' ? 'الاسم' : 'Name'}: ${customerName}`;
+
+    // Reset fields and close
+    setCustomerName('');
+    setCustomerPhone('');
+    setPickupTime('');
+    onClose();
     
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
+    // Optional: Show success message
+    alert(lang === 'ar' ? 'تم استلام طلبك، أبشر بالسعد!' : 'Order received, we are on it!');
   };
 
   return (
@@ -107,6 +123,13 @@ export default function CartDrawer({
                         className="w-full bg-white dark:bg-dark-surface p-4 rounded-2xl border border-ink/5 focus:ring-2 focus:ring-accent/20 outline-none transition-all dark:text-dark-ink"
                       />
                       <input 
+                        type="tel" 
+                        placeholder={lang === 'ar' ? 'رقم الجوال (واتساب)' : 'Phone Number (WhatsApp)'}
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        className="w-full bg-white dark:bg-dark-surface p-4 rounded-2xl border border-ink/5 focus:ring-2 focus:ring-accent/20 outline-none transition-all dark:text-dark-ink"
+                      />
+                      <input 
                         type="time" 
                         placeholder={lang === 'ar' ? 'وقت الاستلام (اختياري)' : 'Pickup Time (Optional)'}
                         value={pickupTime}
@@ -158,12 +181,16 @@ export default function CartDrawer({
                 <span className="text-3xl font-serif font-bold text-ink dark:text-dark-ink">{total} {t.currency}</span>
               </div>
               <button 
-                onClick={handleSendOrder}
+                onClick={handlePlaceOrderClick}
                 disabled={items.length === 0}
                 className="w-full btn-primary py-4 flex items-center justify-center gap-3 shadow-lg shadow-accent/20 disabled:grayscale disabled:opacity-50"
               >
-                <Send className={`w-5 h-5 ${lang === 'ar' ? '' : 'rotate-180'}`} />
-                <span className="text-lg">{t.sendWhatsapp}</span>
+                <div className="flex items-center gap-2">
+                  <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2 }}>
+                    <ShoppingCart className="w-5 h-5" />
+                  </motion.div>
+                  <span className="text-lg">{lang === 'ar' ? 'إرسال الطلب للمطعم' : 'Send Order to Kitchen'}</span>
+                </div>
               </button>
             </div>
           </motion.div>

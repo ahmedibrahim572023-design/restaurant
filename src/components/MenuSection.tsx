@@ -6,6 +6,7 @@ import { MENU_ITEMS } from '../constants';
 import { translations } from '../translations';
 
 interface MenuSectionProps {
+  items: MenuItem[];
   onAddToCart: (item: MenuItem) => void;
   lang: Language;
 }
@@ -55,7 +56,7 @@ const MenuItemCard = memo(({ item, lang, t, onAddToCart }: { item: MenuItem, lan
 
 MenuItemCard.displayName = 'MenuItemCard';
 
-export default function MenuSection({ onAddToCart, lang }: MenuSectionProps) {
+export default function MenuSection({ items, onAddToCart, lang }: MenuSectionProps) {
   const t = translations[lang];
   const CATEGORIES: Category[] = useMemo(() => lang === 'ar' 
     ? ['الكل', 'أطباق رئيسية', 'حلويات', 'مشروبات'] 
@@ -65,11 +66,11 @@ export default function MenuSection({ onAddToCart, lang }: MenuSectionProps) {
 
   const filteredItems = useMemo(() => {
     return activeCategory === CATEGORIES[0]
-      ? MENU_ITEMS 
-      : MENU_ITEMS.filter(item => 
+      ? items 
+      : items.filter(item => 
           lang === 'ar' ? item.category === activeCategory : item.categoryEn === activeCategory
         );
-  }, [activeCategory, CATEGORIES, lang]);
+  }, [activeCategory, CATEGORIES, lang, items]);
 
   return (
     <section id="menu" className="py-20 px-6 max-w-7xl mx-auto">

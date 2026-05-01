@@ -8,7 +8,10 @@ import ChatWidget from './components/ChatWidget';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import AdminDashboard from './components/AdminDashboard';
-import { MenuItem, CartItem, Language, Theme, Order, OrderStatus } from './types';
+import OffersSection from './components/OffersSection';
+import { MenuItem, CartItem, Language, Theme, Order, OrderStatus, Offer } from './types';
+
+import { MENU_ITEMS } from './constants';
 
 export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -17,8 +20,32 @@ export default function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(MENU_ITEMS);
 
-  // Mock orders for demonstration
+  // Mock initial offers
+  const [offers, setOffers] = useState<Offer[]>([
+    {
+      id: 'offer-1',
+      title: 'خصم 20% على السليق',
+      titleEn: '20% off Saleeg',
+      description: 'استخدم الكود للاستمتاع بخصم ربع القيمة على طبق السليق النجدي.',
+      descriptionEn: 'Use code to enjoy discount on traditional Saleeg.',
+      image: 'https://images.unsplash.com/photo-1512058560550-42749359a777?auto=format&fit=crop&q=80&w=800',
+      isActive: true,
+      code: 'MAZAJ20'
+    },
+    {
+      id: 'offer-2',
+      title: 'قهوة وحلى العصر',
+      titleEn: 'Coffee & Dessert Deal',
+      description: 'اطلب كيكة التمر واحصل على دلة قهوة عربية مجاناً.',
+      descriptionEn: 'Order Date Cake and get a free Arabic coffee pot.',
+      image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&q=80&w=800',
+      isActive: true,
+      code: 'COFFEEFREE'
+    }
+  ]);
+
   const [orders, setOrders] = useState<Order[]>([
     {
       id: 'ord-1234',
@@ -78,6 +105,18 @@ export default function App() {
   const removeItem = (id: string) => {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
+  
+  const handlePlaceOrder = (orderData: Omit<Order, 'id' | 'createdAt' | 'status'>) => {
+    const newOrder: Order = {
+      ...orderData,
+      id: `ORD-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+      status: 'pending',
+      createdAt: Date.now()
+    };
+    setOrders(prev => [newOrder, ...prev]);
+    setCartItems([]); // Clear cart after successful order
+    setIsCartOpen(false);
+  };
 
   const updateOrderStatus = (orderId: string, status: OrderStatus) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
@@ -118,9 +157,13 @@ export default function App() {
         />
         <AdminDashboard 
           orders={orders}
+          offers={offers}
+          menuItems={menuItems}
           onUpdateStatus={updateOrderStatus}
           onDeleteOrder={deleteOrder}
           onUpdateItemQuantity={updateOrderItemQuantity}
+          onUpdateOffers={setOffers}
+          onUpdateMenu={setMenuItems}
           lang={lang}
         />
         <div className="fixed bottom-6 right-6">
@@ -145,12 +188,18 @@ export default function App() {
       <main>
         <Hero onOrderNow={scrollToMenu} lang={lang} />
         
+        <OffersSection offers={offers} lang={lang} />
+
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          <MenuSection onAddToCart={handleAddToCart} lang={lang} />
+          <MenuSection 
+            items={menuItems}
+            onAddToCart={handleAddToCart} 
+            lang={lang} 
+          />
         </motion.div>
 
         <ContactSection lang={lang} />
@@ -168,6 +217,7 @@ export default function App() {
         items={cartItems}
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeItem}
+        onPlaceOrder={handlePlaceOrder}
       />
 
       <ChatWidget 
